@@ -1,0 +1,10 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://bmo0kpxou5dxv"]
+
+[ext_resource type="Shader" uid="uid://b110fi3fxjlmj" path="res://assets/shaders/grid_shader.gdshader" id="1_dvnkw"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_dvnkw")
+shader_parameter/line_thickness = 1.0
+shader_parameter/line_color = Color(0, 0, 0, 1)
+shader_parameter/fill_color = Color(0, 0, 0, 0)
