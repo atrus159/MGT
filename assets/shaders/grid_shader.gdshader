@@ -1,17 +1,14 @@
 shader_type spatial;
 render_mode unshaded, cull_disabled;
 
-uniform vec4 wire_color : source_color = vec4(0.0, 1.0, 1.0, 1.0);
-uniform float wire_width = 1.0;
-
 varying vec3 bary;
 varying vec4 data;
 varying vec3 world_normals;
 
-const vec3 FORWARD = vec3(1.0,0.0,0.0);
-const vec3 BACKARD = vec3(-1.0,0.0,0.0);
-const vec3 LEFT = vec3(0.0,0.0,1.0);
-const vec3 RIGHT = vec3(0.0,0.0,-1.0);
+const vec3 FORWARD = vec3(0.0,0.0,1.0);
+const vec3 BACKARD = vec3(0.0,0.0,-1.0);
+const vec3 LEFT = vec3(1.0,0.0,0.0);
+const vec3 RIGHT = vec3(-1.0,0.0,0.0);
 const vec3 UP = vec3(0.0,1.0,0.0);
 const vec3 DOWN = vec3(0.0,-1.0,0.0);
 
@@ -21,6 +18,18 @@ const int LEFT_INDEX = 2;
 const int RIGHT_INDEX = 3;
 const int FORWARD_INDEX = 4;
 const int BACK_INDEX = 5;
+
+const int EMPTY = 0;
+const int SURFACE = 1;
+const int SELECTED = 2;
+const int STARTING = 3;
+
+uniform vec4 surface_wire_color : source_color = vec4(0.0, 1.0, 1.0, 1.0);
+uniform vec4 selected_wire_color : source_color = vec4(0.0, 1.0, 0.0, 1.0);
+uniform vec4 starting_wire_color : source_color = vec4(1.0, 1.0, 0.0, 1.0);
+uniform float wire_width = 2.0;
+
+
 
 int[6] process_faces(vec4 input_data){
 	int[6] toReturn = int[6](0,0,0,0,0,0);
@@ -76,13 +85,22 @@ void fragment() {
     vec3 a3 = smoothstep(vec3(0.0), d * wire_width, bary);
 
     float edge = min(a3.x, a3.z);//min(min(a3.x, a3.y), a3.z);
-	float style_mask = data.r;
+	int style_mask = int(round(data.r*8.0));
 	int[6] faces = process_faces(data);
 	float alpha_mask = data.a;
 	
 	bool drawCurrentFace = faces[getCurrentFace(world_normals)] == 1;
 	
-    ALBEDO = wire_color.rgb;
+
+    if(style_mask == EMPTY){
+		drawCurrentFace = false;
+	}else if(style_mask == SURFACE){
+		ALBEDO = surface_wire_color.rgb;
+	}else if(style_mask == SELECTED){
+		ALBEDO = selected_wire_color.rgb;
+	}else if(style_mask == STARTING){
+		ALBEDO = starting_wire_color.rgb;
+	}
 	if(drawCurrentFace){
 		ALPHA = 1.0 - edge;
 	}else{

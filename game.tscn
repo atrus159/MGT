@@ -10,17 +10,17 @@
 
 [node name="Game" type="Node3D" unique_id=87651182]
 
-[node name="Playing_Field" type="MultiMeshInstance3D" parent="." unique_id=71724495]
+[node name="PlayingField" type="MultiMeshInstance3D" parent="." unique_id=71724495]
 script = ExtResource("1_feb5d")
 
-[node name="BoundingBox" type="MeshInstance3D" parent="Playing_Field" unique_id=493273018]
+[node name="BoundingBox" type="MeshInstance3D" parent="PlayingField" unique_id=493273018]
 
 [node name="Selector" type="Node3D" parent="." unique_id=955189114]
 script = ExtResource("2_fc0e3")
 
-[node name="Selection" type="Node3D" parent="." unique_id=1086103405]
+[node name="Selection" type="Node3D" parent="Selector" unique_id=1086103405]
 
-[node name="SelectionMesh" type="MeshInstance3D" parent="Selection" unique_id=459824261]
+[node name="SelectionMesh" type="MeshInstance3D" parent="Selector/Selection" unique_id=459824261]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.5, 0.5)
 mesh = SubResource("BoxMesh_fc0e3")
 surface_material_override/0 = ExtResource("3_7jktm")
@@ -31,6 +31,8 @@ script = ExtResource("1_80nbo")
 [node name="Camera3D" type="Camera3D" parent="Pivot" unique_id=1792725952]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 7)
 current = true
+
+[node name="Characters" type="Node3D" parent="." unique_id=997997101]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1338089695]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.006863, 5.760017, 0)

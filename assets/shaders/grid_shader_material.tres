@@ -5,5 +5,7 @@
 [resource]
 render_priority = 0
 shader = ExtResource("1_dvnkw")
-shader_parameter/wire_color = Color(0, 1, 1, 1)
+shader_parameter/surface_wire_color = Color(0, 1, 1, 1)
+shader_parameter/selected_wire_color = Color(0, 1, 0.46666667, 1)
+shader_parameter/starting_wire_color = Color(1, 0.7372549, 0, 1)
 shader_parameter/wire_width = 2.0

@@ -1,8 +1,8 @@
 shader_type spatial;
 render_mode unshaded;
 
-uniform vec4 wire_color : source_color = vec4(1.0, 1.0, 0.0, 1.0);
-uniform float wire_width = 1.0;
+uniform vec4 wire_color : source_color = vec4(0.0, 1.0, 0.0, 1.0);
+uniform float wire_width = 2.0;
 
 varying vec3 bary;
 

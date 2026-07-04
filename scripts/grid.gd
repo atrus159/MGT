@@ -14,9 +14,9 @@ enum coords {
 
 enum style {
 	empty = 0,
-	whiteBorder = 1,
-	blackBorder = 2,
-	solid = 3
+	surface = 1,
+	selected = 2,
+	starting = 3
 }
 
 enum face {
@@ -34,7 +34,10 @@ const bounding_material = preload("res://assets/shaders/bounding_shader_material
 var gridCells: Array = []
 var startingPoint = Vector3(-(length*spacing)/2,-(height*spacing)/4,-(width*spacing)/2)
 
+var characterTemplate = preload("res://assets/scenes/character.tscn")
+
 @onready var BoundingBox = $BoundingBox
+@onready var CharacterContainer = get_tree().current_scene.get_node("Characters")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -81,6 +84,18 @@ func _ready() -> void:
 	
 	multimesh = mm
 	
+func _place_character(point: Array[int]):
+	var newChar = characterTemplate.instantiate()
+	CharacterContainer.add_child(newChar)
+	gridCells[point[0]][point[1]][point[2]].set_contents(newChar)
+	newChar.position = _to_world_space(point)
+	
+func _move_character(character: Node, point: Array[int]):
+	var charPosition = _to_grid_space(character.position)
+	gridCells[charPosition[0]][charPosition[1]][charPosition[2]].set_contents(null)
+	gridCells[point[0]][point[1]][point[2]].set_contents(character)
+	character.position = _to_world_space(point)
+	
 func _get_position_index(point: Array[int]) -> int:
 	return point[2] + height * point[1] + height * width * point[0]	
 
@@ -88,7 +103,7 @@ func _set_data_state(point: Array[int], cell_style: style, faces: Array[int] = [
 	var styleMask = cell_style
 	var facesMask = 2**0*faces[0] + 2**1*faces[1] + 2**2*faces[2] + 2**3*faces[3] + 2**4*faces[4] + 2**5*faces[5]
 	var alphaMask = alpha
-	multimesh.set_instance_custom_data(_get_position_index(point),Color(styleMask / 255.0, facesMask/63.0, 0.0, alphaMask/255.0))
+	multimesh.set_instance_custom_data(_get_position_index(point),Color(styleMask / 8.0, facesMask/63.0, 0.0, alphaMask/255.0))
 	
 func _clear_data_states():
 	for i in range(length):
@@ -96,11 +111,21 @@ func _clear_data_states():
 			for k in range(height):
 				_set_data_state([i,j,k], style.empty)
 
-func _set_data_states_plane(planeHeight: int):
-	for i in range(length):
-		for j in range(width):
-			_set_data_state([i,j,planeHeight], style.blackBorder,[0,1,0,0,0,0])
-				
+func _set_data_states_plane(gridPlane: Dictionary, setStyle: style):
+	match gridPlane.direction:
+		coords.X:
+			for j in range(width):
+				for k in range(height):
+					_set_data_state([gridPlane.distance,j,k], setStyle,[0,0,1,0,0,0])
+		coords.Y:
+			for i in range(length):
+				for k in range(height):
+					_set_data_state([i,gridPlane.distance,k], setStyle,[0,0,0,0,0,1])
+		coords.Z:
+			for i in range(length):
+				for j in range(width):
+					_set_data_state([i,j,gridPlane.distance], setStyle,[0,1,0,0,0,0])
+
 	
 func _to_grid_space(point: Vector3) -> Array[int]:
 	var convertedPoint = point - startingPoint

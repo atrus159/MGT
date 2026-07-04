@@ -13,9 +13,16 @@ enum modes {
 	PLACING
 }
 
+enum style {
+	empty = 0,
+	surface = 1,
+	selected = 2,
+	starting = 3
+}
+
 var mode = modes.FREE;
 
-var selected = [0,0,0]
+var selectedPos = [0,0,0]
 var selectedPlane = {
 	"direction": coords.Z,
 	"distance": 5
@@ -28,9 +35,10 @@ var startingPlane = {
 
 var selectorSuspend = 0
 var prevSelected = [0,0,0]
+var selectedChar = null
 
-@onready var field = get_tree().current_scene.get_node("Playing_Field")
-@onready var selection = get_tree().current_scene.get_node("Selection")
+@onready var field = get_tree().current_scene.get_node("PlayingField")
+@onready var selection = $Selection
 
 func _ready():
 	field._clear_data_states()
@@ -42,19 +50,25 @@ func _ready():
 func _process(delta):
 	match mode:
 		modes.FREE:
+			if Input.is_action_just_pressed("Select"):
+				var clickedChar = Globals._mouse_get_clicked_character()
+				if clickedChar != null:
+					selectedChar = clickedChar
+					mode = modes.SELECTING
+					Globals.zoom_lockout = true
+					selection.show()
+					selectedPos = field._to_grid_space(clickedChar.position)
+					selectedPlane.distance = selectedPos[2]
+					selection.position = field._to_world_space(selectedPos)
 			if Input.is_key_pressed(KEY_SPACE):
-				mode = modes.SELECTING
-				Globals.zoom_lockout = true
-				selection.show()
-			if Input.is_key_pressed(KEY_0):
 				mode = modes.PLACING
 				selection.show()
 		modes.SELECTING:
 			if Input.is_action_just_pressed("Camera_Zoom_In"):
 				if selectedPlane.distance > 0:
 					selectedPlane.distance -= 1
-					selected[2] = selectedPlane.distance
-					selection.position = field._to_world_space(selected)
+					selectedPos[2] = selectedPlane.distance
+					selection.position = field._to_world_space(selectedPos)
 					if selectorSuspend != 2:
 						selectorSuspend = 1
 						prevSelected = field._get_mouse_plane_coords(selectedPlane)
@@ -62,8 +76,8 @@ func _process(delta):
 			if Input.is_action_just_pressed("Camera_Zoom_Out"):
 				if selectedPlane.distance < field.height - 1:
 					selectedPlane.distance += 1
-					selected[2] = selectedPlane.distance
-					selection.position = field._to_world_space(selected)
+					selectedPos[2] = selectedPlane.distance
+					selection.position = field._to_world_space(selectedPos)
 					if selectorSuspend != 2:
 						selectorSuspend = 1
 						prevSelected = field._get_mouse_plane_coords(selectedPlane)
@@ -74,7 +88,7 @@ func _process(delta):
 				prevSelected = field._get_mouse_plane_coords(selectedPlane)
 				
 			field._clear_data_states()
-			field._set_data_states_plane(selectedPlane.distance)
+			field._set_data_states_plane(selectedPlane,style.surface)
 			var test_selected = field._get_mouse_plane_coords(selectedPlane)
 			
 			if test_selected[0] != -1:
@@ -82,18 +96,33 @@ func _process(delta):
 					if test_selected != prevSelected:
 						selectorSuspend = 0
 				if selectorSuspend == 0:
-					selected = test_selected
-					selection.position = field._to_world_space(selected)
+					selectedPos = test_selected
+					selection.position = field._to_world_space(selectedPos)
+					
+			var fullBox: Array[int] = [1,1,1,1,1,1]
+			field._set_data_state(field._to_grid_space(selectedChar.position),
+					style.selected,
+					fullBox
+				)
 			
 			if Input.is_action_just_pressed("Select"):
 				mode = modes.FREE
 				Globals.zoom_lockout = false
 				selection.hide()
 				field._clear_data_states()
+				selectorSuspend = 0
+				field._move_character(selectedChar,selectedPos)
+				selectedChar = null
 		modes.PLACING:
 			field._clear_data_states()
+			field._set_data_states_plane(startingPlane,style.starting)
 			var test_selected = field._get_mouse_plane_coords(startingPlane)
 			if test_selected[0] != -1:
-				selected = test_selected
-				selection.position = field._to_world_space(selected)
+				selectedPos = test_selected
+				selection.position = field._to_world_space(selectedPos)
+			if Input.is_action_just_pressed("Select"):
+				field._place_character(selectedPos)
+				mode = modes.FREE
+				selection.hide()
+				field._clear_data_states()
 	
