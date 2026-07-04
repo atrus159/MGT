@@ -17,11 +17,11 @@ var rotating = false
 
 func _process(delta):
 	rotating = Input.is_action_pressed("Camera_Rotate")
-	
-	if Input.is_action_just_pressed("Camera_Zoom_In"):
-		zoom -= zoom_sensitivity
-	if Input.is_action_just_pressed("Camera_Zoom_Out"):
-		zoom += zoom_sensitivity
+	if !Globals.zoom_lockout:
+		if Input.is_action_just_pressed("Camera_Zoom_In"):
+			zoom -= zoom_sensitivity
+		if Input.is_action_just_pressed("Camera_Zoom_Out"):
+			zoom += zoom_sensitivity
 	zoom = clamp(zoom, min_zoom, max_zoom)
 	camera.position.z = zoom
 	

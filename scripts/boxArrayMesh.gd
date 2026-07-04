@@ -1,6 +1,6 @@
 class_name boxArrayMesh
 
-static func make(size) -> ArrayMesh:
+static func make(length,width,height) -> ArrayMesh:
 	var mesh = ArrayMesh.new()
 	var vertices = []
 	var normals = []
@@ -10,14 +10,14 @@ static func make(size) -> ArrayMesh:
 	arrays.resize(Mesh.ARRAY_MAX)
 
 	# cube corners
-	var p000 = Vector3(0, 0, 0)*size
-	var p001 = Vector3(0, 0, 1)*size
-	var p010 = Vector3(0, 1, 0)*size
-	var p011 = Vector3(0, 1, 1)*size
-	var p100 = Vector3(1, 0, 0)*size
-	var p101 = Vector3(1, 0, 1)*size
-	var p110 = Vector3(1, 1, 0)*size
-	var p111 = Vector3(1, 1, 1)*size
+	var p000 = Vector3(0, 0, 0)
+	var p001 = Vector3(0, 0, width)
+	var p010 = Vector3(0, height, 0)
+	var p011 = Vector3(0, height, width)
+	var p100 = Vector3(length, 0, 0)
+	var p101 = Vector3(length, 0, width)
+	var p110 = Vector3(length, height, 0)
+	var p111 = Vector3(length, height, width)
 
 	# FRONT (+Z)
 	add_tri(p001, p111, p101, Vector3(0, 0, 1), vertices, normals, bary)

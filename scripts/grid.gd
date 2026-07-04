@@ -30,11 +30,18 @@ enum face {
 
 
 const grid_material = preload("res://assets/shaders/grid_shader_material.tres")
+const bounding_material = preload("res://assets/shaders/bounding_shader_material.tres")
 var gridCells: Array = []
 var startingPoint = Vector3(-(length*spacing)/2,-(height*spacing)/4,-(width*spacing)/2)
 
+@onready var BoundingBox = $BoundingBox
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	
+	BoundingBox.mesh = boxArrayMesh.make(spacing*length,spacing*width,spacing*height)
+	BoundingBox.mesh.surface_set_material(0, bounding_material)
+	BoundingBox.position = startingPoint
 	
 	gridCells.resize(length)
 	for i in range(length):
@@ -47,7 +54,7 @@ func _ready() -> void:
 				gridCells[i][j][k] = gridCell.new()
 	
 	
-	var cell_mesh = boxArrayMesh.make(spacing)
+	var cell_mesh = boxArrayMesh.make(spacing,spacing,spacing)
 	cell_mesh.surface_set_material(0, grid_material)
 	
 	var mm = MultiMesh.new()
