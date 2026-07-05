@@ -1,0 +1,9 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://dhw7alfovvo1f"]
+
+[ext_resource type="Shader" uid="uid://b15ssru5psypc" path="res://assets/shaders/AOE_shader.gdshader" id="1_ilncp"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_ilncp")
+shader_parameter/wire_color = Color(0.9411765, 0.5764706, 0, 1)
+shader_parameter/wire_width = 2.0

@@ -102,7 +102,7 @@ void fragment() {
 		ALBEDO = starting_wire_color.rgb;
 	}
 	if(drawCurrentFace){
-		ALPHA = 1.0 - edge;
+		ALPHA = alpha_mask - edge;
 	}else{
 		ALPHA = 0.0;
 	}

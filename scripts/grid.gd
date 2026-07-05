@@ -31,6 +31,7 @@ enum face {
 
 const grid_material = preload("res://assets/shaders/grid_shader_material.tres")
 const bounding_material = preload("res://assets/shaders/bounding_shader_material.tres")
+const AOE_material = preload("res://assets/shaders/AOE_shader_material.tres")
 var gridCells: Array = []
 var startingPoint = Vector3(-(length*spacing)/2,-(height*spacing)/4,-(width*spacing)/2)
 
@@ -38,6 +39,7 @@ var characterTemplate = preload("res://assets/scenes/character.tscn")
 
 @onready var BoundingBox = $BoundingBox
 @onready var CharacterContainer = get_tree().current_scene.get_node("Characters")
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -84,12 +86,35 @@ func _ready() -> void:
 	
 	multimesh = mm
 	
+	
+func _make_range_mesh(point: Array[int], range: int) -> Dictionary:
+	var pointList = []
+	for i in range(-range, range+1):
+		for j in range(-range, range+1):
+			for k in range(-range, range+1):
+				if sqrt(i**2 + j**2 + k**2)<= range:
+					var newPoint: Array[int] = [point[0]+i,point[1]+j,point[2]+k]
+					if _in_bounds(newPoint):
+						pointList.append(newPoint)
+	
+	var rangeMesh = boxArrayMesh._make_from_array(pointList,spacing)
+	var rangeMeshInstance = MeshInstance3D.new()
+	rangeMeshInstance.mesh = rangeMesh
+	rangeMeshInstance.position = startingPoint
+	rangeMeshInstance.material_override = AOE_material
+	add_child((rangeMeshInstance))
+	return {
+		"array": pointList,
+		"instance": rangeMeshInstance
+	}
+	
 func _place_character(point: Array[int]):
 	var newChar = characterTemplate.instantiate()
 	CharacterContainer.add_child(newChar)
 	gridCells[point[0]][point[1]][point[2]].set_contents(newChar)
 	newChar.position = _to_world_space(point)
-	
+
+
 func _move_character(character: Node, point: Array[int]):
 	var charPosition = _to_grid_space(character.position)
 	gridCells[charPosition[0]][charPosition[1]][charPosition[2]].set_contents(null)
@@ -102,8 +127,7 @@ func _get_position_index(point: Array[int]) -> int:
 func _set_data_state(point: Array[int], cell_style: style, faces: Array[int] = [0,0,0,0,0,0], alpha: float = 1.0):
 	var styleMask = cell_style
 	var facesMask = 2**0*faces[0] + 2**1*faces[1] + 2**2*faces[2] + 2**3*faces[3] + 2**4*faces[4] + 2**5*faces[5]
-	var alphaMask = alpha
-	multimesh.set_instance_custom_data(_get_position_index(point),Color(styleMask / 8.0, facesMask/63.0, 0.0, alphaMask/255.0))
+	multimesh.set_instance_custom_data(_get_position_index(point),Color(styleMask / 8.0, facesMask/63.0, 0.0, alpha))
 	
 func _clear_data_states():
 	for i in range(length):
@@ -111,20 +135,35 @@ func _clear_data_states():
 			for k in range(height):
 				_set_data_state([i,j,k], style.empty)
 
-func _set_data_states_plane(gridPlane: Dictionary, setStyle: style):
+func _set_data_states_plane(gridPlane: Dictionary, setStyle: style, range: Array = []):
+	var mainAlpha = 1
+	var outsideAlpha = 0.2
+
 	match gridPlane.direction:
 		coords.X:
 			for j in range(width):
 				for k in range(height):
-					_set_data_state([gridPlane.distance,j,k], setStyle,[0,0,1,0,0,0])
+					var alpha = mainAlpha
+					if range != []:
+						if !range.has([gridPlane.distance,j,k]):
+							alpha = outsideAlpha
+					_set_data_state([gridPlane.distance,j,k], setStyle,[0,0,1,0,0,0], alpha)
 		coords.Y:
 			for i in range(length):
 				for k in range(height):
-					_set_data_state([i,gridPlane.distance,k], setStyle,[0,0,0,0,0,1])
+					var alpha = mainAlpha
+					if range != []:
+						if !range.has([i,gridPlane.distance,k]):
+							alpha = outsideAlpha
+					_set_data_state([i,gridPlane.distance,k], setStyle,[0,0,0,0,0,1], alpha)
 		coords.Z:
 			for i in range(length):
 				for j in range(width):
-					_set_data_state([i,j,gridPlane.distance], setStyle,[0,1,0,0,0,0])
+					var alpha = mainAlpha
+					if range != []:
+						if !range.has([i,j,gridPlane.distance]):
+							alpha = outsideAlpha
+					_set_data_state([i,j,gridPlane.distance], setStyle,[0,1,0,0,0,0], alpha)
 
 	
 func _to_grid_space(point: Vector3) -> Array[int]:
@@ -170,3 +209,4 @@ func _get_mouse_plane_coords(gridPlane: Dictionary) -> Array[int]:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass
+			

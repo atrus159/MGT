@@ -37,6 +37,10 @@ var selectorSuspend = 0
 var prevSelected = [0,0,0]
 var selectedChar = null
 
+var moveRange = 2
+var rangeCells: Array
+var rangeMesh: MeshInstance3D
+
 @onready var field = get_tree().current_scene.get_node("PlayingField")
 @onready var selection = $Selection
 
@@ -60,6 +64,9 @@ func _process(delta):
 					selectedPos = field._to_grid_space(clickedChar.position)
 					selectedPlane.distance = selectedPos[2]
 					selection.position = field._to_world_space(selectedPos)
+					var AOE = field._make_range_mesh(selectedPos,moveRange)
+					rangeCells = AOE.array
+					rangeMesh = AOE.instance
 			if Input.is_key_pressed(KEY_SPACE):
 				mode = modes.PLACING
 				selection.show()
@@ -88,7 +95,7 @@ func _process(delta):
 				prevSelected = field._get_mouse_plane_coords(selectedPlane)
 				
 			field._clear_data_states()
-			field._set_data_states_plane(selectedPlane,style.surface)
+			field._set_data_states_plane(selectedPlane,style.surface, rangeCells)
 			var test_selected = field._get_mouse_plane_coords(selectedPlane)
 			
 			if test_selected[0] != -1:
@@ -113,6 +120,7 @@ func _process(delta):
 				selectorSuspend = 0
 				field._move_character(selectedChar,selectedPos)
 				selectedChar = null
+				rangeMesh.queue_free()
 		modes.PLACING:
 			field._clear_data_states()
 			field._set_data_states_plane(startingPlane,style.starting)
