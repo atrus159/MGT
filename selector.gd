@@ -111,16 +111,22 @@ func _process(delta):
 					style.selected,
 					fullBox
 				)
-			
-			if Input.is_action_just_pressed("Select"):
-				mode = modes.FREE
-				Globals.zoom_lockout = false
-				selection.hide()
-				field._clear_data_states()
-				selectorSuspend = 0
-				field._move_character(selectedChar,selectedPos)
-				selectedChar = null
-				rangeMesh.queue_free()
+			var inRange = rangeCells.has(selectedPos)
+			if inRange:
+				selection.get_node("SelectionMesh").set_instance_shader_parameter("wire_color", Color.GREEN)
+				if Input.is_action_just_pressed("Select"):
+					mode = modes.FREE
+					Globals.zoom_lockout = false
+					selection.hide()
+					field._clear_data_states()
+					selectorSuspend = 0
+					field._move_character(selectedChar,selectedPos)
+					selectedChar = null
+					rangeMesh.queue_free()
+			else:
+				var red = Color.RED
+				red.a = 0.5
+				selection.get_node("SelectionMesh").set_instance_shader_parameter("wire_color", red)
 		modes.PLACING:
 			field._clear_data_states()
 			field._set_data_states_plane(startingPlane,style.starting)

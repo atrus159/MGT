@@ -47,6 +47,9 @@ func _ready() -> void:
 	BoundingBox.mesh = boxArrayMesh.make(spacing*length,spacing*width,spacing*height)
 	BoundingBox.mesh.surface_set_material(0, bounding_material)
 	BoundingBox.position = startingPoint
+	var grey = Color.GRAY
+	grey.a = 0.5
+	BoundingBox.set_instance_shader_parameter("wire_color", grey)
 	
 	gridCells.resize(length)
 	for i in range(length):
@@ -107,6 +110,18 @@ func _make_range_mesh(point: Array[int], range: int) -> Dictionary:
 		"array": pointList,
 		"instance": rangeMeshInstance
 	}
+	
+func _make_line(point: Array[int], direction: Array[int]):
+	var pointList = []
+	if direction == [0,0,0]:
+		return
+	var curPoint = point
+	while _in_bounds(curPoint):
+		pointList.append(curPoint)
+		curPoint = [curPoint[0]+direction[0],curPoint[1]+direction[1],curPoint[2]+direction[2]]
+	var lineMesh = boxArrayMesh._make_from_array(pointList,spacing)
+	var lineInstance = MeshInstance3D.new()
+	#collision body
 	
 func _place_character(point: Array[int]):
 	var newChar = characterTemplate.instantiate()
