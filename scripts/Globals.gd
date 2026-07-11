@@ -2,6 +2,7 @@
 extends Node
 
 var zoom_lockout = false
+var spacing = 1
 
 func _get_mouse_position() -> Dictionary:
 	var camera = get_viewport().get_camera_3d()

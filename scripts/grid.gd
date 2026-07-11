@@ -4,7 +4,7 @@ extends MultiMeshInstance3D
 @export var length = 8
 @export var width = 8
 @export var height = 6
-@export var spacing = 1
+@export var spacing = Globals.spacing
 
 enum coords {
 	X,
@@ -32,6 +32,7 @@ enum face {
 const grid_material = preload("res://assets/shaders/grid_shader_material.tres")
 const bounding_material = preload("res://assets/shaders/bounding_shader_material.tres")
 const AOE_material = preload("res://assets/shaders/AOE_shader_material.tres")
+const line_template = preload("res://assets/scenes/line.tscn")
 var gridCells: Array = []
 var startingPoint = Vector3(-(length*spacing)/2,-(height*spacing)/4,-(width*spacing)/2)
 
@@ -105,23 +106,32 @@ func _make_range_mesh(point: Array[int], range: int) -> Dictionary:
 	rangeMeshInstance.mesh = rangeMesh
 	rangeMeshInstance.position = startingPoint
 	rangeMeshInstance.material_override = AOE_material
-	add_child((rangeMeshInstance))
+	add_child(rangeMeshInstance)
 	return {
 		"array": pointList,
 		"instance": rangeMeshInstance
 	}
 	
-func _make_line(point: Array[int], direction: Array[int]):
-	var pointList = []
+func _make_line(point: Array[int], direction: Array[int]) -> Dictionary:
+	var pointList : = []
 	if direction == [0,0,0]:
-		return
-	var curPoint = point
+		return {
+			"array": pointList,
+			"instance": null
+		}
+	var curPoint : Array[int] = point
 	while _in_bounds(curPoint):
 		pointList.append(curPoint)
-		curPoint = [curPoint[0]+direction[0],curPoint[1]+direction[1],curPoint[2]+direction[2]]
-	var lineMesh = boxArrayMesh._make_from_array(pointList,spacing)
-	var lineInstance = MeshInstance3D.new()
-	#collision body
+		curPoint = [curPoint[0]+direction[0],curPoint[1]+direction[1],curPoint[2]+direction[2]] as Array[int]
+	var line = line_template.instantiate()
+	add_child(line)
+	line._initiate(pointList)
+	line.position = startingPoint
+	return {
+		"array": pointList,
+		"instance": line
+	}
+
 	
 func _place_character(point: Array[int]):
 	var newChar = characterTemplate.instantiate()

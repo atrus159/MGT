@@ -71,6 +71,13 @@ func _process(delta):
 				mode = modes.PLACING
 				selection.show()
 		modes.SELECTING:
+			if Input.is_key_pressed(KEY_SPACE):
+				for i in range(-1,2):
+					for j in range(-1,2):
+						for k in range(-1,2):
+							field._make_line(selectedPos, [i,j,k] as Array[int])
+					
+			
 			if Input.is_action_just_pressed("Camera_Zoom_In"):
 				if selectedPlane.distance > 0:
 					selectedPlane.distance -= 1
