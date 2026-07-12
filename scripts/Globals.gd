@@ -24,7 +24,7 @@ func _mouse_ray_trace_plane(plane: Plane) -> Vector3:
 	else:
 		return Vector3(-1000,-1000,-1000)
 
-func _mouse_get_clicked_character() -> Node:
+func _mouse_get_clicked(predicate: Callable) -> Node:
 	var mouse_pos = Globals._get_mouse_position()
 	var origin = mouse_pos.origin
 	var direction = mouse_pos.direction
@@ -41,7 +41,26 @@ func _mouse_get_clicked_character() -> Node:
 		if result.is_empty():
 			break
 		var candidate = result.collider
-		if candidate.is_in_group("Characters"):
+		if predicate.call(candidate):
 			return candidate
 		excluded.append(result.rid)
 	return null
+	
+	
+func _mouse_get_clicked_character() -> Node:
+	return _mouse_get_clicked(
+		func(node):
+			return node.is_in_group("Characters")
+	)
+	
+func _mouse_get_clicked_line() -> Node:
+	return _mouse_get_clicked(
+		func(node):
+			return node.is_in_group("Lines")
+	)
+
+func _line_get_clicked(line: Node) -> bool:
+	return _mouse_get_clicked(
+		func(node):
+			return node == line
+	) != null

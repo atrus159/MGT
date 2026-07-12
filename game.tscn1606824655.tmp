@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://dqnqbiig28jhv"]
+
+[ext_resource type="Script" uid="uid://d1d6diu7hiioo" path="res://scripts/camera_pivot.gd" id="1_80nbo"]
+[ext_resource type="Script" uid="uid://c1isoews3ngal" path="res://scripts/grid.gd" id="1_feb5d"]
+[ext_resource type="Environment" uid="uid://c12jnamqfnewx" path="res://assets/new_environment.tres" id="2_e2o6t"]
+[ext_resource type="Script" uid="uid://cpud14qbpf2wh" path="res://selector.gd" id="2_fc0e3"]
+[ext_resource type="Material" uid="uid://bdrsvbroh0rpw" path="res://assets/shaders/bounding_shader_material.tres" id="3_7jktm"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_fc0e3"]
+
+[node name="Game" type="Node3D" unique_id=87651182]
+
+[node name="PlayingField" type="MultiMeshInstance3D" parent="." unique_id=71724495]
+script = ExtResource("1_feb5d")
+
+[node name="BoundingBox" type="MeshInstance3D" parent="PlayingField" unique_id=493273018]
+
+[node name="Selector" type="Node3D" parent="." unique_id=955189114]
+script = ExtResource("2_fc0e3")
+
+[node name="Selection" type="Node3D" parent="Selector" unique_id=1086103405]
+
+[node name="SelectionMesh" type="MeshInstance3D" parent="Selector/Selection" unique_id=459824261]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.5, 0.5)
+mesh = SubResource("BoxMesh_fc0e3")
+surface_material_override/0 = ExtResource("3_7jktm")
+
+[node name="Pivot" type="Node3D" parent="." unique_id=1954982074]
+script = ExtResource("1_80nbo")
+
+[node name="Camera3D" type="Camera3D" parent="Pivot" unique_id=1792725952]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 7)
+current = true
+
+[node name="Characters" type="Node3D" parent="." unique_id=997997101]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1338089695]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.006863, 5.760017, 0)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=523463719]
+environment = ExtResource("2_e2o6t")

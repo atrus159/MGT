@@ -10,7 +10,8 @@ enum coords {
 enum modes {
 	FREE,
 	SELECTING,
-	PLACING
+	PLACING,
+	LINEAR
 }
 
 enum style {
@@ -40,6 +41,9 @@ var selectedChar = null
 var moveRange = 2
 var rangeCells: Array
 var rangeMesh: MeshInstance3D
+var lines = []
+var selectedLine = null
+var linearDeselectTimer = 0
 
 @onready var field = get_tree().current_scene.get_node("PlayingField")
 @onready var selection = $Selection
@@ -71,11 +75,23 @@ func _process(delta):
 				mode = modes.PLACING
 				selection.show()
 		modes.SELECTING:
+			
 			if Input.is_key_pressed(KEY_SPACE):
+				lines.clear()
 				for i in range(-1,2):
 					for j in range(-1,2):
 						for k in range(-1,2):
-							field._make_line(selectedPos, [i,j,k] as Array[int])
+							var newLine = field._make_line(selectedPos, [i,j,k] as Array[int])
+							if newLine.instance != null:
+								lines.append(newLine.instance)
+				mode = modes.LINEAR
+				Globals.zoom_lockout = false
+				selection.hide()
+				field._clear_data_states()
+				selectorSuspend = 0
+				selectedChar = null
+				rangeMesh.queue_free()
+				return
 					
 			
 			if Input.is_action_just_pressed("Camera_Zoom_In"):
@@ -146,4 +162,20 @@ func _process(delta):
 				mode = modes.FREE
 				selection.hide()
 				field._clear_data_states()
+		modes.LINEAR:
+			if selectedLine == null:
+				selectedLine = Globals._mouse_get_clicked_line()
+				for line in lines:
+					line._set_state(-1)
+			else:
+				for line in lines:
+					line._set_state(-1)
+				selectedLine._set_state(10)
+				if !Globals._line_get_clicked(selectedLine):
+					linearDeselectTimer += delta
+					if linearDeselectTimer >= 0.1:
+						selectedLine = null
+						linearDeselectTimer = 0
+				else:
+					linearDeselectTimer = 0
 	
