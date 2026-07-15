@@ -42,8 +42,9 @@ var moveRange = 2
 var rangeCells: Array
 var rangeMesh: MeshInstance3D
 var lines = []
-var selectedLine = null
+var selectedLine = {}
 var linearDeselectTimer = 0
+var lineCenter : Array[int] = [0,0,0]
 
 @onready var field = get_tree().current_scene.get_node("PlayingField")
 @onready var selection = $Selection
@@ -59,8 +60,9 @@ func _process(delta):
 	match mode:
 		modes.FREE:
 			if Input.is_action_just_pressed("Select"):
-				var clickedChar = Globals._mouse_get_clicked_character()
-				if clickedChar != null:
+				var clickedCharDictionary = Globals._mouse_get_clicked_character()
+				if !clickedCharDictionary.is_empty():
+					var clickedChar = clickedCharDictionary.collider
 					selectedChar = clickedChar
 					mode = modes.SELECTING
 					Globals.zoom_lockout = true
@@ -75,13 +77,13 @@ func _process(delta):
 				mode = modes.PLACING
 				selection.show()
 		modes.SELECTING:
-			
 			if Input.is_key_pressed(KEY_SPACE):
+				lineCenter = field._to_grid_space(selectedChar.position)
 				lines.clear()
 				for i in range(-1,2):
 					for j in range(-1,2):
 						for k in range(-1,2):
-							var newLine = field._make_line(selectedPos, [i,j,k] as Array[int])
+							var newLine = field._make_line(lineCenter, [i,j,k] as Array[int])
 							if newLine.instance != null:
 								lines.append(newLine.instance)
 				mode = modes.LINEAR
@@ -163,19 +165,41 @@ func _process(delta):
 				selection.hide()
 				field._clear_data_states()
 		modes.LINEAR:
-			if selectedLine == null:
+			if selectedLine.is_empty():
 				selectedLine = Globals._mouse_get_clicked_line()
 				for line in lines:
 					line._set_state(-1)
 			else:
-				for line in lines:
-					line._set_state(-1)
-				selectedLine._set_state(10)
-				if !Globals._line_get_clicked(selectedLine):
-					linearDeselectTimer += delta
-					if linearDeselectTimer >= 0.1:
-						selectedLine = null
-						linearDeselectTimer = 0
-				else:
+				var isClicked = Globals._line_get_clicked(selectedLine.collider)
+				if isClicked.check:
+					for line in lines:
+						line._set_state(-1)
+					var lineCoord = selectedLine.collider._get_nearest(isClicked.position)
+					var dist = Globals._diagonal_dist(lineCenter,lineCoord)
+					selectedLine.collider._set_state(dist)
 					linearDeselectTimer = 0
+				else:
+					var antiLine = _get_anti_line()
+					isClicked = Globals._line_get_clicked(antiLine)
+					if isClicked.check:
+						selectedLine = {
+							"collider": antiLine,
+							"position": isClicked.position
+						}
+						linearDeselectTimer = 0
+					else:
+						linearDeselectTimer += delta
+						if linearDeselectTimer >= 0.1:
+							selectedLine = {}
+							linearDeselectTimer = 0
+					
 	
+func _get_anti_line() -> Node:
+	for line in lines:
+		var p1 = line.pointList[1]
+		var p2 = selectedLine.collider.pointList[1]
+		if p1[0] - lineCenter[0] == lineCenter[0] - p2[0]:
+			if p1[1] - lineCenter[1] == lineCenter[1] - p2[1]:
+				if p1[2] - lineCenter[2] == lineCenter[2] - p2[2]:
+					return line
+	return null

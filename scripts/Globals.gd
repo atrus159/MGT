@@ -24,7 +24,7 @@ func _mouse_ray_trace_plane(plane: Plane) -> Vector3:
 	else:
 		return Vector3(-1000,-1000,-1000)
 
-func _mouse_get_clicked(predicate: Callable) -> Node:
+func _mouse_get_clicked(predicate: Callable) -> Dictionary:
 	var mouse_pos = Globals._get_mouse_position()
 	var origin = mouse_pos.origin
 	var direction = mouse_pos.direction
@@ -42,25 +42,44 @@ func _mouse_get_clicked(predicate: Callable) -> Node:
 			break
 		var candidate = result.collider
 		if predicate.call(candidate):
-			return candidate
+			return result
 		excluded.append(result.rid)
-	return null
+	return {}
 	
 	
-func _mouse_get_clicked_character() -> Node:
+func _mouse_get_clicked_character() -> Dictionary:
 	return _mouse_get_clicked(
 		func(node):
 			return node.is_in_group("Characters")
 	)
 	
-func _mouse_get_clicked_line() -> Node:
+func _mouse_get_clicked_line() -> Dictionary:
 	return _mouse_get_clicked(
 		func(node):
 			return node.is_in_group("Lines")
 	)
 
-func _line_get_clicked(line: Node) -> bool:
-	return _mouse_get_clicked(
+func _line_get_clicked(line: Node) -> Dictionary:
+	var getClicked = _mouse_get_clicked(
 		func(node):
 			return node == line
-	) != null
+	)
+	var pos = Vector3(-1,-1,-1)
+	if !getClicked.is_empty():
+		pos = getClicked.position
+	return {
+		"check": getClicked,
+		"position": pos
+	}
+
+func _grid_dist(p1: Array[int], p2: Array[int]) -> float:
+	var a0 = (p1[0] - p2[0])**2
+	var a1 = (p1[1] - p2[1])**2
+	var a2 = (p1[2] - p2[2])**2
+	return sqrt(a0 + a1 + a2)
+	
+func _diagonal_dist(p1: Array[int], p2: Array[int]) -> int:
+	var a0 = abs(p1[0] - p2[0])
+	var a1 = abs(p1[1] - p2[1])
+	var a2 = abs(p1[2] - p2[2])
+	return max(a0,a1,a2)

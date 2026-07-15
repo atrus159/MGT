@@ -19,8 +19,8 @@ void fragment() {
 
     float edge = min(a3.x, a3.z);//min(min(a3.x, a3.y), a3.z);
 	
-	float lineAlpha = 0.3;
-	float surfaceAlpha = 0.1;
+	float lineAlpha = 1.0;
+	float surfaceAlpha = 0.3;
 	ALPHA = mix(lineAlpha*data.a, surfaceAlpha*data.a, edge);
     ALBEDO = wire_color.rgb;
 
