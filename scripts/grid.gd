@@ -41,6 +41,7 @@ var characterTemplate = preload("res://assets/scenes/character.tscn")
 @onready var BoundingBox = $BoundingBox
 @onready var CharacterContainer = get_tree().current_scene.get_node("Characters")
 
+var AStar: AStarCustom = AStarCustom.new()
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -89,17 +90,52 @@ func _ready() -> void:
 				i += 1
 	
 	multimesh = mm
+	call_deferred("_after_ready")
 	
+func _after_ready():
+	var counter = 0
+	for i in range(length):
+		for j in range(width):
+			for k in range(height):
+				AStar.add_point(counter,Vector3(i,j,k))
+				gridCells[i][j][k].index = counter
+				counter +=1
 	
-func _make_range_mesh(point: Array[int], range: int) -> Dictionary:
+	for i in range(length):
+		for j in range(width):
+			for k in range(height):
+				var curIndex = gridCells[i][j][k].index
+				for i2 in range (i-1, i+2):
+					for j2 in range(j-1, j+2):
+						for k2 in range(k-1, k+2):
+							if _in_bounds([i2,j2,k2] as Array[int]):
+								var neighborIndex = gridCells[i2][j2][k2].index
+								AStar.connect_points(curIndex,neighborIndex, false)
+	
+func _make_range_mesh(point: Array[int], range: int, surfaceOnly = false) -> Dictionary:
 	var pointList = []
 	for i in range(-range, range+1):
 		for j in range(-range, range+1):
 			for k in range(-range, range+1):
-				if sqrt(i**2 + j**2 + k**2)<= range:
-					var newPoint: Array[int] = [point[0]+i,point[1]+j,point[2]+k]
-					if _in_bounds(newPoint):
-						pointList.append(newPoint)
+				#if sqrt(i**2 + j**2 + k**2)<= range:
+				var newPoint: Array[int] = [point[0]+i,point[1]+j,point[2]+k]
+				if _in_bounds(newPoint):
+					var ind1 = gridCells[point[0]][point[1]][point[2]].index
+					var ind2 = gridCells[newPoint[0]][newPoint[1]][newPoint[2]].index
+					var path = AStar.get_id_path(ind1,ind2)
+					var dist = AStar._calc_path_cost(path)
+					if dist <= range:
+						if !surfaceOnly:
+							pointList.append(newPoint)
+						else:
+							var toAdd = true
+							for id in path:
+								var idLoc = AStar.get_point_position(id)
+								var pointLoc = [idLoc.x, idLoc.y, idLoc.z] as Array[int]
+								if !_is_surface(pointLoc):
+									toAdd = false
+							if toAdd:
+								pointList.append(newPoint)
 	
 	var rangeMesh = boxArrayMesh._make_from_array(pointList,spacing)
 	var rangeMeshInstance = MeshInstance3D.new()
@@ -112,6 +148,17 @@ func _make_range_mesh(point: Array[int], range: int) -> Dictionary:
 		"instance": rangeMeshInstance
 	}
 	
+func _is_surface(point: Array[int]) -> bool:
+	if point[2] == 0:
+		return true
+	for i in range(point[0]-1, point[0]+2):
+		for j in range(point[1]-1, point[1]+2):
+			for k in range(point[2]-1, point[2]+2):
+				if _in_bounds([i,j,k] as Array[int], true):
+					if !_in_bounds([i,j,k] as Array[int]):
+						return true
+	return false
+
 func _make_line(point: Array[int], direction: Array[int]) -> Dictionary:
 	var pointList : = []
 	if direction == [0,0,0]:
@@ -215,11 +262,11 @@ func _to_world_space(point: Array[int]) -> Vector3:
 	worldPoint += startingPoint
 	return worldPoint
 	
-func _in_bounds(point: Array[int]) -> bool:
+func _in_bounds(point: Array[int], onlyBounds = false) -> bool:
 	if point[0] >= 0 and point[0] < length:
 		if point[1] >= 0 and point[1] < width:
 			if point[2] >= 0 and point[2] < height:
-				if gridCells[point[0]][point[1]][point[2]].building_inside == null:
+				if onlyBounds or gridCells[point[0]][point[1]][point[2]].building_inside == null:
 					return true
 	return false
 
