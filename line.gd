@@ -34,14 +34,21 @@ func _initiate(points: Array):
 
 func _set_state(index: int):
 	for i in range(pointList.size()):
-		if i == index:
+		if index == -1:
+			multiMesh.set_instance_custom_data(i,Color(0.0,0.0,0.0,0.0))
+		elif index == -2:
+			if i == 0:
+				multiMesh.set_instance_custom_data(i,Color(0.0,0.0,0.0,0.0))
+			else:
+				multiMesh.set_instance_custom_data(i,Color(0.0,0.0,0.0,0.1))
+		elif i == index:
 			multiMesh.set_instance_custom_data(i,Color(0.0,0.0,0.0,1.0))
 		elif i < index and i != 0:
 			multiMesh.set_instance_custom_data(i,Color(0.0,0.0,0.0,0.3))
 		elif i > index:
 			multiMesh.set_instance_custom_data(i,Color(0.0,0.0,0.0,0.1))
 		elif i == 0:
-			multiMesh.set_instance_custom_data(i,Color(0.0,0.0,0.0,0.0))
+			multiMesh.set_instance_custom_data(i,Color(0.0,0.0,0.0,1.0))
 
 func _get_nearest(point: Vector3) -> Array[int]:
 	for i in range(pointList.size()):

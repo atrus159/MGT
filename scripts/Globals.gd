@@ -4,6 +4,19 @@ extends Node
 var zoom_lockout = false
 var spacing = 1
 
+var coords = {
+	"X" : 0,
+	"Y" : 1,
+	"Z" : 2
+}
+
+var style = {
+	"EMPTY": 0,
+	"SURFACE" : 1,
+	"SELECTED" : 2,
+	"STARTING" : 3
+}
+
 func _get_mouse_position() -> Dictionary:
 	var camera = get_viewport().get_camera_3d()
 	var mouse_pos = get_viewport().get_mouse_position()
