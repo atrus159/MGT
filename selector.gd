@@ -25,7 +25,7 @@ var prevData = {}
 func _ready():
 	field._clear_data_states()
 	var selectionMesh = selection.get_node("SelectionMesh")
-	selectionMesh.mesh = boxArrayMesh.make(field.spacing,field.spacing,field.spacing)
+	selectionMesh.mesh = boxArrayMesh.make(Globals.spacing,Globals.spacing,Globals.spacing)
 	selectionMesh.position = Vector3(0,0,0)
 	selection.hide()
 

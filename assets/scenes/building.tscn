@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://bhc7xjxqmtg8e"]
+
+[ext_resource type="Script" uid="uid://c4psm56fn0wps" path="res://building.gd" id="1_ulr04"]
+
+[node name="Building" type="MeshInstance3D" unique_id=618305837]
+script = ExtResource("1_ulr04")

@@ -4,16 +4,51 @@
 [ext_resource type="Script" uid="uid://c1isoews3ngal" path="res://scripts/grid.gd" id="1_feb5d"]
 [ext_resource type="Environment" uid="uid://c12jnamqfnewx" path="res://assets/new_environment.tres" id="2_e2o6t"]
 [ext_resource type="Script" uid="uid://cpud14qbpf2wh" path="res://selector.gd" id="2_fc0e3"]
+[ext_resource type="PackedScene" uid="uid://bhc7xjxqmtg8e" path="res://assets/scenes/building.tscn" id="2_ryrav"]
 [ext_resource type="Material" uid="uid://bdrsvbroh0rpw" path="res://assets/shaders/bounding_shader_material.tres" id="3_7jktm"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_ryrav"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_eow3j"]
+albedo_color = Color(0, 0.43137255, 0, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_fc0e3"]
 
 [node name="Game" type="Node3D" unique_id=87651182]
 
+[node name="Ground" type="MeshInstance3D" parent="." unique_id=83848196]
+transform = Transform3D(8, 0, 0, 0, 0.5, 0, 0, 0, 8, 0, -1.26, 0)
+mesh = SubResource("BoxMesh_ryrav")
+surface_material_override/0 = SubResource("StandardMaterial3D_eow3j")
+
 [node name="PlayingField" type="MultiMeshInstance3D" parent="." unique_id=71724495]
 script = ExtResource("1_feb5d")
 
 [node name="BoundingBox" type="MeshInstance3D" parent="PlayingField" unique_id=493273018]
+
+[node name="Buildings" type="Node3D" parent="." unique_id=853581744]
+
+[node name="Building" parent="Buildings" unique_id=618305837 instance=ExtResource("2_ryrav")]
+length = 2
+x = 1
+y = 1
+
+[node name="Building2" parent="Buildings" unique_id=428775147 instance=ExtResource("2_ryrav")]
+length = 2
+width = 3
+x = 5
+y = 1
+
+[node name="Building3" parent="Buildings" unique_id=416362825 instance=ExtResource("2_ryrav")]
+length = 2
+x = 5
+y = 5
+
+[node name="Building4" parent="Buildings" unique_id=1503691297 instance=ExtResource("2_ryrav")]
+length = 2
+width = 3
+x = 1
+y = 4
 
 [node name="Selector" type="Node3D" parent="." unique_id=955189114]
 script = ExtResource("2_fc0e3")
@@ -35,7 +70,8 @@ current = true
 [node name="Characters" type="Node3D" parent="." unique_id=997997101]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1338089695]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.006863, 5.760017, 0)
+transform = Transform3D(0.9547608, 0.16065389, -0.25024417, 0, 0.8415108, 0.5402403, 0.29737487, -0.51580024, 0.80344146, -9.007, 5.837861, 8.676525)
+light_color = Color(1, 0.92941177, 0.9529412, 1)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=523463719]
 environment = ExtResource("2_e2o6t")

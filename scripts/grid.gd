@@ -160,6 +160,18 @@ func _clear_data_states():
 			for k in range(height):
 				_set_data_state([i,j,k], style.empty)
 
+func _establish_building(x:int,y:int,z:int,l:int,w:int,h:int, building: Node) -> bool:
+	for i in range(x,x+l):
+		for j in range(y,y+w):
+			for k in range(z,z+h):
+				if !_in_bounds([i,j,k] as Array[int]):
+					return false
+	for i in range(x,x+l):
+		for j in range(y,y+w):
+			for k in range(z,z+h):
+				gridCells[i][j][k].building_inside = building
+	return true
+					
 func _set_data_states_plane(gridPlane: Dictionary, setStyle: style, range: Array = []):
 	var mainAlpha = 1
 	var outsideAlpha = 0.2
@@ -207,7 +219,8 @@ func _in_bounds(point: Array[int]) -> bool:
 	if point[0] >= 0 and point[0] < length:
 		if point[1] >= 0 and point[1] < width:
 			if point[2] >= 0 and point[2] < height:
-				return true
+				if gridCells[point[0]][point[1]][point[2]].building_inside == null:
+					return true
 	return false
 
 func _get_mouse_plane_coords(gridPlane: Dictionary) -> Array[int]:
