@@ -9,6 +9,9 @@ func _update(selector: Node, result: Dictionary) -> Dictionary:
 		var clickedCharDictionary = Globals._mouse_get_clicked_character()
 		if !clickedCharDictionary.is_empty():
 			return clickedCharDictionary
+		return {
+			"position": Vector3(-999,-999,-999)
+		}
 	return {}
 
 

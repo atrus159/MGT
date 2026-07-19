@@ -79,17 +79,3 @@ light_color = Color(1, 0.92941177, 0.9529412, 1)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=523463719]
 environment = ExtResource("2_e2o6t")
-
-[node name="Control" type="Control" parent="." unique_id=770821915]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="ColorRect" type="ColorRect" parent="Control" unique_id=997962363]
-layout_mode = 0
-offset_left = 1.0
-offset_top = 503.0
-offset_right = 1150.0
-offset_bottom = 648.0
-color = Color(0, 0, 0, 1)

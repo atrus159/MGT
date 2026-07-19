@@ -36,8 +36,6 @@ const line_template = preload("res://assets/scenes/line.tscn")
 var gridCells: Array = []
 var startingPoint = Vector3(-(length*spacing)/2,-(height*spacing)/4,-(width*spacing)/2)
 
-var characterTemplate = preload("res://assets/scenes/character.tscn")
-
 @onready var BoundingBox = $BoundingBox
 @onready var CharacterContainer = get_tree().current_scene.get_node("Characters")
 
@@ -180,8 +178,8 @@ func _make_line(point: Array[int], direction: Array[int]) -> Dictionary:
 	}
 
 	
-func _place_character(point: Array[int]):
-	var newChar = characterTemplate.instantiate()
+func _place_character(point: Array[int], character):
+	var newChar = character.instantiate()
 	CharacterContainer.add_child(newChar)
 	gridCells[point[0]][point[1]][point[2]].set_contents(newChar)
 	newChar.position = _to_world_space(point)

@@ -11,7 +11,7 @@ extends MeshInstance3D
 func _ready() -> void:
 	field._establish_building(x,y,0,length,width,height,self)
 	position = field._to_world_space([x,y,0] as Array[int])
-	mesh = boxArrayMesh.make(Globals.spacing*length,Globals.spacing*width,Globals.spacing*height)
+	mesh = boxArrayMesh.make(Globals.spacing*length,Globals.spacing*width,Globals.spacing*height-0.01)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
