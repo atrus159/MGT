@@ -1,11 +1,11 @@
-class_name move_action extends action
+class_name move_ability extends ability
 
 func _init():
 	mode = selectorMove.new()
 
 func _make_queue_data(selectorData: Dictionary) -> Dictionary:
 	return {
-		"action": self,
+		"ability": self,
 		"character": character,
 		"actionCost": actionCost,
 		"startingPos": field._to_grid_space(character.position),

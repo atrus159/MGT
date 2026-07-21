@@ -1,4 +1,4 @@
-class_name action extends Node
+class_name ability extends Node
 
 var mode : selectorMode;
 var character: Node;
