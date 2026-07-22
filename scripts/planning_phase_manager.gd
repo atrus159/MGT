@@ -3,10 +3,11 @@ extends Node3D
 @onready var field = get_tree().current_scene.get_node("PlayingField")
 @onready var selector = get_tree().current_scene.get_node("Selector")
 @onready var UI = get_tree().current_scene.get_node("CharacterUI")
+@onready var actionPhaseManager = get_tree().current_scene.get_node("ActionPhaseManager")
 
-var characterOne = preload("res://assets/scenes/character.tscn")
-var characterTwo = preload("res://assets/scenes/character.tscn")
-var characterThree = preload("res://assets/scenes/character.tscn")
+var characterOne = preload("res://scripts/characters/character_1.tscn")
+var characterTwo = preload("res://scripts/characters/character_2.tscn")
+var characterThree = preload("res://scripts/characters/character_3.tscn")
 
 enum states {
 	PLACING_ONE,
@@ -76,6 +77,6 @@ func _process(delta: float) -> void:
 			if Input.is_action_just_pressed("ability_1"):
 				if selector.selectedChar._start_ability(0):
 					curState = states.ABILITY
-			elif Input.is_action_just_pressed("ability_2"):
-				selector.selectedChar._perform_queue()
-				curState = states.FREE
+	if Input.is_action_just_pressed("ability_2"):
+		actionPhaseManager._start()
+		curState = states.FREE

@@ -1,4 +1,4 @@
-extends Node3D
+class_name character extends Node3D
 
 var moveRange = 2
 var actionQueue : Array[Dictionary]
@@ -38,7 +38,7 @@ func _perform_queue():
 	actionQueue.clear()
 	
 func _perform_ability(i: int) -> bool:
-	if i <= actionQueue.size():
+	if i < actionQueue.size():
 		actionQueue[i].ability._perform_queue_data(actionQueue[i])
 		return true
 	else:

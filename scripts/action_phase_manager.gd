@@ -4,6 +4,8 @@ extends Node3D
 @onready var field = get_tree().current_scene.get_node("PlayingField")
 @onready var selector = get_tree().current_scene.get_node("Selector")
 @onready var UI = get_tree().current_scene.get_node("CharacterUI")
+@onready var animationManager = get_tree().current_scene.get_node("AnimationManager")
+
 
 var turnOrder : Array[Node]
 var animationLock = false
@@ -25,6 +27,7 @@ var curState;
 func _start():
 	curState = states.START
 	animationLock = true
+	animationManager._set_timer(1)
 	active = true
 	charIndex = 0
 	for curChar in get_tree().get_nodes_in_group("Characters"):
@@ -49,7 +52,7 @@ func _process(delta: float) -> void:
 					curState = states.TURN_PRE_ANIM
 					animationLock = true
 					abilityIndex = 0
-					#perform current char's animation
+					animationManager._set_timer(1)
 			states.TURN_PRE_ANIM:
 				if !animationLock:
 					curState = states.TURN_ABILITY
@@ -58,7 +61,7 @@ func _process(delta: float) -> void:
 				if stillGoing:
 					animationLock = true
 					curState = states.TURN_ANIM
-					#play current ability animation
+					animationManager._set_timer(1)
 				else:
 					curState = states.TURN_END
 			states.TURN_ANIM:
@@ -73,6 +76,6 @@ func _process(delta: float) -> void:
 					curState = states.TURN_PRE_ANIM
 					animationLock = true
 					abilityIndex = 0
-					#perform current char's animation
+					animationManager._set_timer(1)
 			states.END:
 				active = false
