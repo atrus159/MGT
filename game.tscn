@@ -3,10 +3,12 @@
 [ext_resource type="Script" uid="uid://d1d6diu7hiioo" path="res://scripts/camera_pivot.gd" id="1_80nbo"]
 [ext_resource type="Script" uid="uid://c1isoews3ngal" path="res://scripts/grid.gd" id="1_feb5d"]
 [ext_resource type="Environment" uid="uid://c12jnamqfnewx" path="res://assets/new_environment.tres" id="2_e2o6t"]
-[ext_resource type="Script" uid="uid://cpud14qbpf2wh" path="res://selector.gd" id="2_fc0e3"]
+[ext_resource type="Script" uid="uid://cpud14qbpf2wh" path="res://scripts/selector.gd" id="2_fc0e3"]
 [ext_resource type="PackedScene" uid="uid://bhc7xjxqmtg8e" path="res://assets/scenes/building.tscn" id="2_ryrav"]
 [ext_resource type="Material" uid="uid://bdrsvbroh0rpw" path="res://assets/shaders/bounding_shader_material.tres" id="3_7jktm"]
-[ext_resource type="Script" uid="uid://df0kb5hfmbnqn" path="res://planning_phase_manager.gd" id="5_eow3j"]
+[ext_resource type="Script" uid="uid://df0kb5hfmbnqn" path="res://scripts/planning_phase_manager.gd" id="5_eow3j"]
+[ext_resource type="Script" uid="uid://q8c65k145fo5" path="res://scripts/action_phase_manager.gd" id="6_vef74"]
+[ext_resource type="Script" uid="uid://bfnesmnvb7vlp" path="res://scripts/animation_manager.gd" id="7_hve3p"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_ryrav"]
 
@@ -63,6 +65,12 @@ surface_material_override/0 = ExtResource("3_7jktm")
 
 [node name="PlanningPhaseManager" type="Node3D" parent="." unique_id=998195649]
 script = ExtResource("5_eow3j")
+
+[node name="ActionPhaseManager" type="Node3D" parent="." unique_id=1333801013]
+script = ExtResource("6_vef74")
+
+[node name="AnimationManager" type="Node3D" parent="." unique_id=539769250]
+script = ExtResource("7_hve3p")
 
 [node name="Pivot" type="Node3D" parent="." unique_id=1954982074]
 script = ExtResource("1_80nbo")

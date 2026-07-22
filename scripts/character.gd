@@ -6,6 +6,8 @@ var maxActionPoints = 6
 var actionPoints = maxActionPoints
 var abilityList : Array[ability]
 var curAbility: int
+var speed
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	add_to_group("Characters")
@@ -35,8 +37,12 @@ func _perform_queue():
 		actionQueue[i].ability._perform_queue_data(actionQueue[i])
 	actionQueue.clear()
 	
-	
-	
+func _perform_ability(i: int) -> bool:
+	if i <= actionQueue.size():
+		actionQueue[i].ability._perform_queue_data(actionQueue[i])
+		return true
+	else:
+		return false
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

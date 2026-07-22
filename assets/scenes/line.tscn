@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://b1e4vmhvaa7r4"]
 
-[ext_resource type="Script" uid="uid://dptlfnrs6pscr" path="res://line.gd" id="1_p1333"]
+[ext_resource type="Script" uid="uid://dptlfnrs6pscr" path="res://scripts/line.gd" id="1_p1333"]
 
 [node name="Line" type="StaticBody3D" unique_id=1354218992]
 script = ExtResource("1_p1333")
