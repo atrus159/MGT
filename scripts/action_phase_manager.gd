@@ -3,8 +3,10 @@ extends Node3D
 
 @onready var field = get_tree().current_scene.get_node("PlayingField")
 @onready var selector = get_tree().current_scene.get_node("Selector")
-@onready var UI = get_tree().current_scene.get_node("CharacterUI")
+@onready var UI = get_tree().current_scene.get_node("UI")
 @onready var animationManager = get_tree().current_scene.get_node("AnimationManager")
+@onready var planningPhaseManager = get_tree().current_scene.get_node("PlanningPhaseManager")
+
 
 
 var turnOrder : Array[Node]
@@ -25,6 +27,9 @@ enum states {
 var curState;
 
 func _start():
+	selector.selectedChar = null
+	selector.field._clear_data_states()
+	UI._start_action_phase()
 	curState = states.START
 	animationLock = true
 	animationManager._set_timer(1)
@@ -34,7 +39,7 @@ func _start():
 		var any = false
 		for i in range(turnOrder.size()):
 			var curPlacedChar = turnOrder[i]
-			if curChar.speed > curPlacedChar.speed:
+			if curChar.speed < curPlacedChar.speed:
 				turnOrder.insert(i, curChar)
 				any = true
 				break
@@ -79,3 +84,4 @@ func _process(delta: float) -> void:
 					animationManager._set_timer(1)
 			states.END:
 				active = false
+				planningPhaseManager._start()

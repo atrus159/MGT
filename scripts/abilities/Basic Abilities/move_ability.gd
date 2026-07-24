@@ -13,6 +13,6 @@ func _make_queue_data(selectorData: Dictionary) -> Dictionary:
 	}
 	
 func _perform_queue_data(queueData: Dictionary):
-	if field._to_grid_space(character.position) == queueData.startingPos:
-		if field.gridCells[queueData.targetPos[0]][queueData.targetPos[1]][queueData.targetPos[2]].contents == null:
+	#if field._to_grid_space(character.position) == queueData.startingPos:
+		#if field.gridCells[queueData.targetPos[0]][queueData.targetPos[1]][queueData.targetPos[2]].contents == null:
 			field._move_character(character,queueData.targetPos)

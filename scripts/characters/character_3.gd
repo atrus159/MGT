@@ -5,6 +5,7 @@ class_name character_3 extends character
 func _ready() -> void:
 	super._ready()
 	speed = 3
+	charName = "Magia Acuerda"
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

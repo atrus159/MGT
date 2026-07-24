@@ -7,6 +7,7 @@ var actionPoints = maxActionPoints
 var abilityList : Array[ability]
 var curAbility: int
 var speed
+var charName
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -32,10 +33,9 @@ func _end_ability(event: Dictionary):
 	actionQueue.append(queueData)
 	actionPoints -= ability.actionCost
 	
-func _perform_queue():
-	for i in range(actionQueue.size()):
-		actionQueue[i].ability._perform_queue_data(actionQueue[i])
+func _start_round():
 	actionQueue.clear()
+	actionPoints = maxActionPoints
 	
 func _perform_ability(i: int) -> bool:
 	if i < actionQueue.size():

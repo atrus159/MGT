@@ -9,6 +9,9 @@
 [ext_resource type="Script" uid="uid://df0kb5hfmbnqn" path="res://scripts/planning_phase_manager.gd" id="5_eow3j"]
 [ext_resource type="Script" uid="uid://q8c65k145fo5" path="res://scripts/action_phase_manager.gd" id="6_vef74"]
 [ext_resource type="Script" uid="uid://bfnesmnvb7vlp" path="res://scripts/animation_manager.gd" id="7_hve3p"]
+[ext_resource type="FontFile" uid="uid://cw34rb0ghhbnc" path="res://assets/fonts/evil_empire/Evil Empire.otf" id="10_hve3p"]
+[ext_resource type="Script" uid="uid://b4dox8vcfo8l7" path="res://ui_manager.gd" id="10_mfdv2"]
+[ext_resource type="FontFile" uid="uid://cd4dmiuisbevd" path="res://assets/fonts/neon_80s/Neon.ttf" id="12_iotsf"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_ryrav"]
 
@@ -88,17 +91,80 @@ light_color = Color(1, 0.92941177, 0.9529412, 1)
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=523463719]
 environment = ExtResource("2_e2o6t")
 
-[node name="CharacterUI" type="Control" parent="." unique_id=770821915]
-visible = false
+[node name="UI" type="Control" parent="." unique_id=770821915]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
+script = ExtResource("10_mfdv2")
 
-[node name="ColorRect" type="ColorRect" parent="CharacterUI" unique_id=997962363]
+[node name="Character_Select" type="Control" parent="UI" unique_id=1598289812]
+layout_mode = 1
+anchor_left = -1.016
+anchor_right = 28.767002
+anchor_bottom = 16.220001
+offset_left = 44.64
+offset_top = 390.0
+offset_right = -1106.68
+offset_bottom = -218.80005
+
+[node name="ColorRect" type="ColorRect" parent="UI/Character_Select" unique_id=997962363]
 layout_mode = 0
-offset_left = 1.0
-offset_top = 503.0
-offset_right = 1150.0
-offset_bottom = 648.0
-color = Color(0, 0, 0, 1)
+offset_left = -17.0
+offset_top = 121.0
+offset_right = 1176.0
+offset_bottom = 291.0
+
+[node name="Label" type="Label" parent="UI/Character_Select" unique_id=1449178450]
+layout_mode = 0
+offset_left = 389.0
+offset_top = 57.0
+offset_right = 780.0
+offset_bottom = 122.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("10_hve3p")
+theme_override_font_sizes/font_size = 61
+text = "Character_Name"
+
+[node name="ActionsLabel" type="Label" parent="UI/Character_Select" unique_id=2143604110]
+layout_mode = 0
+offset_left = 47.0
+offset_top = 142.0
+offset_right = 179.0
+offset_bottom = 178.0
+theme_override_colors/font_color = Color(1, 0, 1, 1)
+theme_override_fonts/font = ExtResource("12_iotsf")
+theme_override_font_sizes/font_size = 34
+text = "Actions: "
+
+[node name="ActionLabel" type="Control" parent="UI" unique_id=1019491464]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Label" type="Label" parent="UI/ActionLabel" unique_id=974239849]
+layout_mode = 0
+offset_left = 419.0
+offset_top = 5.0
+offset_right = 763.0
+offset_bottom = 79.0
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_fonts/font = ExtResource("10_hve3p")
+theme_override_font_sizes/font_size = 57
+text = "Action Phase"
+
+[node name="PlanningLabel" type="Control" parent="UI" unique_id=1052842889]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Label" type="Label" parent="UI/PlanningLabel" unique_id=1963688359]
+layout_mode = 0
+offset_left = 443.0
+offset_top = 5.0
+offset_right = 787.0
+offset_bottom = 79.0
+theme_override_colors/font_color = Color(0, 1, 0, 1)
+theme_override_fonts/font = ExtResource("10_hve3p")
+theme_override_font_sizes/font_size = 57
+text = "Planning Phase"
