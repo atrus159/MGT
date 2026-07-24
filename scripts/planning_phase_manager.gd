@@ -89,7 +89,22 @@ func _process(delta: float) -> void:
 				if Input.is_action_just_pressed("ability_1"):
 					if selector.selectedChar._start_ability(0):
 						curState = states.ABILITY
-		if Input.is_action_just_pressed("ability_2"):
+				elif Input.is_action_just_pressed("ability_2"):
+					if selector.selectedChar._start_ability(1):
+						curState = states.ABILITY
+				elif Input.is_action_just_pressed("ability_3"):
+					if selector.selectedChar._start_ability(2):
+						curState = states.ABILITY
+				elif Input.is_action_just_pressed("ability_4"):
+					if selector.selectedChar._start_ability(3):
+						curState = states.ABILITY
+				elif Input.is_action_just_pressed("ability_5"):
+					if selector.selectedChar._start_ability(4):
+						curState = states.ABILITY
+				elif Input.is_action_just_pressed("ability_6"):
+					if selector.selectedChar._start_ability(5):
+						curState = states.ABILITY
+		if Input.is_action_just_pressed("generic"):
 			actionPhaseManager._start()
 			curState = states.FREE
 			active = false

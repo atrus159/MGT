@@ -15,6 +15,8 @@ func _ready() -> void:
 	abilityList.resize(6)
 	abilityList[0] = move_ability.new()
 	abilityList[0]._attach(self)
+	abilityList[1] = throw_ability.new()
+	abilityList[1]._attach(self)
 	add_child(abilityList[0])
 
 

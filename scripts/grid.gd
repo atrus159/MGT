@@ -109,6 +109,71 @@ func _after_ready():
 							if _in_bounds([i2,j2,k2] as Array[int]):
 								var neighborIndex = gridCells[i2][j2][k2].index
 								AStar.connect_points(curIndex,neighborIndex, false)
+								
+func _make_curve(xFunc : Callable, yFunc: Callable, zFunc: Callable, range = -1) -> Array:
+	var tempArray = []
+	var i = -1
+	if range != -1:
+		for tInt in range(0,range*100):
+			var t : float = tInt
+			t = t / 100
+			var curX = floor(xFunc.call(t))
+			var curY = floor(yFunc.call(t))
+			var curZ = floor(zFunc.call(t))
+			var newEntry = [curX, curY, curZ] as Array[int]
+			if tempArray.size() == 0 or tempArray[i] != newEntry:
+				tempArray.append(newEntry)
+				i += 1
+	else:
+		var t :float = 0
+		while true:
+			var curX = floor(xFunc.call(t))
+			var curY = floor(yFunc.call(t))
+			var curZ = floor(zFunc.call(t))
+			var newEntry = [curX, curY, curZ] as Array[int]
+			if !_in_bounds(newEntry):
+				break
+			if tempArray.size() == 0 or tempArray[i] != newEntry:
+				tempArray.append(newEntry)
+				i += 1
+			t += 0.01
+	return tempArray
+	
+func _make_gravity_arc(start: Array[int], end: Array[int]) -> Dictionary:
+
+	var offset = float(spacing)/2
+	
+	var xFuncGeneric = func(t: float, x0: float, x1: float) -> float:
+		return x0 + (x1-x0)*t
+	var xFunc = xFuncGeneric.bind(start[0] + offset, end[0] + offset)
+	
+	var yFuncGeneric = func(t: float, y0: float, y1: float) -> float:
+		return y0 + (y1-y0)*t
+	var yFunc = yFuncGeneric.bind(start[1] + offset, end[1] + offset)
+	
+	var zFuncGeneric
+	if start[2] <= end[2]:
+		zFuncGeneric = func(t: float, z0: float, z1: float) -> float:
+			return (z0 - z1) * t*t - 2*(z0-z1)*t + z0
+	else:
+		zFuncGeneric = func(t: float, z0: float, z1: float) -> float:
+			return -(z0 - z1) * t*t + z0
+	
+	var zFunc = zFuncGeneric.bind(start[2] + offset, end[2] + offset)
+	
+	var pointList = _make_curve(xFunc,yFunc,zFunc)
+	var mesh = boxArrayMesh._make_from_array(pointList,spacing)
+	var arcMeshInstance = MeshInstance3D.new()
+	arcMeshInstance.mesh = mesh
+	arcMeshInstance.position = startingPoint
+	arcMeshInstance.material_override = AOE_material
+	add_child(arcMeshInstance)
+	return {
+		"array": pointList,
+		"instance": arcMeshInstance
+	}
+	
+	
 	
 func _make_range_mesh(point: Array[int], range: int, surfaceOnly = false) -> Dictionary:
 	var pointList = []
